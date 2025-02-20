@@ -14,7 +14,7 @@ export function Products() {
     updateProducts,
     getLowStockProducts,
     lowStockProducts,
-    checkProducts
+    checkProducts,
   } = useProductStore();
   const removeProduct = useStore((state) => state.removeProduct);
 
@@ -27,23 +27,23 @@ export function Products() {
     category: "",
     color: "",
   });
-  useEffect(()=>{
-    checkProducts()
-  },[formData,products])
-  console.log('low stock-->',lowStockProducts)
+  useEffect(() => {
+    checkProducts();
+  }, [formData, products]);
+  console.log("low stock-->", lowStockProducts);
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('formData--:',formData)
+    console.log("formData--:", formData);
     if (editingProduct) {
       //updateProduct({ ...editingProduct, ...formData });
       updateProducts({
-        ...formData
-      })
-      console.log('after Update -->',formData)
+        ...formData,
+      });
+      console.log("after Update -->", formData);
       setEditingProduct(null);
     } else {
       addProducts({
-        ...formData
+        ...formData,
       });
     }
     setFormData({
@@ -77,8 +77,8 @@ export function Products() {
         </button>
       </div>
       {isAddingProduct && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center h-screen">
+          <div className="bg-gray-200 rounded-lg p-6 max-w-md w-full">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
               {editingProduct ? "Edit Product" : "Add New Product"}
             </h3>
@@ -93,7 +93,7 @@ export function Products() {
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full py-1.5 rounded-md border-gray-500 shadow-md focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   required
                 />
               </div>
@@ -106,7 +106,7 @@ export function Products() {
                   onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1   block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -123,7 +123,7 @@ export function Products() {
                         price: parseFloat(e.target.value),
                       })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="mt-1 py-1.5 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     required
                   />
                 </div>
@@ -140,7 +140,7 @@ export function Products() {
                         stock: parseInt(e.target.value),
                       })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="mt-1 py-1.5 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     required
                   />
                 </div>
@@ -159,7 +159,7 @@ export function Products() {
                         minStock: parseInt(e.target.value),
                       })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="mt-1 py-1.5 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     required
                   />
                 </div>
@@ -173,7 +173,7 @@ export function Products() {
                     onChange={(e) =>
                       setFormData({ ...formData, category: e.target.value })
                     }
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="mt-1 py-1.5 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     required
                   />
                 </div>
@@ -188,7 +188,7 @@ export function Products() {
                   onChange={(e) =>
                     setFormData({ ...formData, color: e.target.value })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 py-1.5 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   required
                 />
               </div>
@@ -253,8 +253,11 @@ export function Products() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-700 ">
-                    {products.map((product,index) => (
-                      <tr key={index} className=" border-b-2 border-r-emerald-950 mt-2">
+                    {products.map((product, index) => (
+                      <tr
+                        key={index}
+                        className=" border-b-2 border-r-emerald-950 mt-2"
+                      >
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-md font-extrabold text-gray-900">
                             {product.name}

@@ -1,14 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import {
   AlertTriangle,
   Package,
   TrendingUp,
-  DollarSign,
   ShoppingCart,
   Clock,
   ChevronRight,
   IndianRupee,
+  X,
 } from "lucide-react";
 import { useAuthStore } from "../contentStore/authStore.js";
 import { useProductStore } from "../contentStore/productStore.js";
@@ -16,6 +16,8 @@ import { useProductStore } from "../contentStore/productStore.js";
 export function Dashboard() {
   const { user } = useAuthStore();
   const { products, checkProducts, lowStockProducts } = useProductStore();
+  const [viewAlert, setViewAlert] = useState(false);
+
   useEffect(() => {
     checkProducts();
   }, []);
@@ -30,7 +32,7 @@ export function Dashboard() {
     .sort((a, b) => b.stock - a.stock)
     .slice(0, 5);
   return (
-    <div className="space-y-8">
+    <div className="space-y-8" >
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-blue-950 to-indigo-800 rounded-2xl p-8 text-white">
         <div className="max-w-3xl">
@@ -101,7 +103,10 @@ export function Dashboard() {
           </div>
         </div>
 
-        <div className='flex justify-start rounded-xl shadow-xl p-6 border border-gray-100 h-40 bg-red-200 transition-all duration-500 ease-in-out hover:scale-110'>
+        <div
+          className="flex justify-start rounded-xl shadow-xl p-6 border border-gray-100 h-40 bg-red-200 transition-all duration-500 ease-in-out hover:scale-110"
+          onClick={() => setViewAlert(true)}
+        >
           <div className="flex items-center">
             <div className="bg-red-50 p-3 rounded-lg">
               <AlertTriangle className="h-6 w-6 text-red-600" />
@@ -162,14 +167,21 @@ export function Dashboard() {
         </div>
 
         {/* Low Stock Alerts */}
-        {lowStockProducts.length > 0 && (
-          <div className="bg-gray-400 rounded-xl shadow-sm border border-gray-100">
+        {lowStockProducts.length > 0 && viewAlert && (
+          // <div className="bg-gray bg-opacity-75 flex items-center justify-center w-full h-full rounded-4xl">
+          <div
+            className="absolute top-0 inset-0 bg-gradient-to-r from-cyan-600 to-red-400 rounded-xl shadow-sm border border-gray-100 w-[40%] h-[70%] m-auto overflow-scroll"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-gray-900">
                   Low Stock Alerts
                 </h2>
-                <Clock className="h-7 w-7 text-black" />
+                <X
+                  className="right-3 w-8 h-8 transition-all duration-500 ease-in-out hover:scale-125"
+                  onClick={() => setViewAlert(false)}
+                />
               </div>
               <div className="space-y-4">
                 {lowStockProducts.map((product, index) => (
@@ -197,6 +209,7 @@ export function Dashboard() {
               </div>
             </div>
           </div>
+          // </div>
         )}
       </div>
     </div>
