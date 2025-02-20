@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import {
   AlertTriangle,
@@ -8,13 +8,17 @@ import {
   ShoppingCart,
   Clock,
   ChevronRight,
+  IndianRupee,
 } from "lucide-react";
-import { useStore } from "../contentStore/useStore.js";
+import { useAuthStore } from "../contentStore/authStore.js";
+import { useProductStore } from "../contentStore/productStore.js";
 
 export function Dashboard() {
-  const { store } = useStore();
-  const { products } = useStore();
-  const { getLowStockProducts } = useStore();
+  const { user } = useAuthStore();
+  const { products, checkProducts, lowStockProducts } = useProductStore();
+  useEffect(() => {
+    checkProducts();
+  }, []);
 
   const totalProducts = products.length;
   const totalStock = products.reduce((acc, product) => acc + product.stock, 0);
@@ -22,17 +26,17 @@ export function Dashboard() {
     (acc, product) => acc + product.price * product.stock,
     0
   );
-
   const topSellingProducts = [...products]
     .sort((a, b) => b.stock - a.stock)
     .slice(0, 5);
-
   return (
     <div className="space-y-8">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-2xl p-8 text-white">
+      <div className="bg-gradient-to-r from-blue-950 to-indigo-800 rounded-2xl p-8 text-white">
         <div className="max-w-3xl">
-          <h1 className="text-3xl font-bold mb-4">Welcome to {store?.name}</h1>
+          <h1 className="text-3xl font-bold mb-4">
+            Welcome to {user.shopname}
+          </h1>
           <p className="text-indigo-100 mb-6">
             Manage your inventory efficiently and track your stock in real-time
           </p>
@@ -53,13 +57,15 @@ export function Dashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <div className="flex items-center">
+        <div className=" flex justify-start rounded-xl shadow-xl p-6 border border-gray-100 h-40 bg-blue-300 transition-all duration-500 ease-in-out hover:scale-110">
+          <div className="flex items-center ">
             <div className="bg-blue-50 p-3 rounded-lg">
               <Package className="h-6 w-6 text-blue-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm text-gray-500">Total Products</p>
+              <p className="text-xl font-semibold text-gray-950">
+                Total Products
+              </p>
               <h3 className="text-xl font-bold text-gray-900">
                 {totalProducts}
               </h3>
@@ -67,41 +73,45 @@ export function Dashboard() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div className="flex justify-start rounded-xl shadow-xl p-6 border border-gray-100 h-40 bg-green-300 transition-all duration-500 ease-in-out hover:scale-110">
           <div className="flex items-center">
             <div className="bg-green-50 p-3 rounded-lg">
               <ShoppingCart className="h-6 w-6 text-green-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm text-gray-500">Total Stock</p>
+              <p className="text-xl font-semibold text-gray-950">Total Stock</p>
               <h3 className="text-xl font-bold text-gray-900">{totalStock}</h3>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div className="flex justify-start rounded-xl shadow-xl p-6 border border-gray-100 h-40 bg-purple-300 transition-all duration-500 ease-in-out hover:scale-110">
           <div className="flex items-center">
             <div className="bg-purple-50 p-3 rounded-lg">
-              <DollarSign className="h-6 w-6 text-purple-600" />
+              <IndianRupee className="h-6 w-6 text-purple-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm text-gray-500">Inventory Value</p>
+              <p className="text-xl font-semibold text-gray-950">
+                Inventory Value
+              </p>
               <h3 className="text-xl font-bold text-gray-900">
-                ${totalValue.toFixed(2)}
+                ₹{totalValue.toFixed(2)}
               </h3>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div className='flex justify-start rounded-xl shadow-xl p-6 border border-gray-100 h-40 bg-red-200 transition-all duration-500 ease-in-out hover:scale-110'>
           <div className="flex items-center">
             <div className="bg-red-50 p-3 rounded-lg">
               <AlertTriangle className="h-6 w-6 text-red-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm text-gray-500">Low Stock Items</p>
+              <p className="text-xl font-semibold text-gray-950">
+                Low Stock Items
+              </p>
               <h3 className="text-xl font-bold text-gray-900">
-                {getLowStockProducts.length}
+                {lowStockProducts.length}
               </h3>
             </div>
           </div>
@@ -110,29 +120,29 @@ export function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Selling Products */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div className="bg-gradient-to-r from-blue-900 to-blue-800 rounded-xl shadow-sm border border-gray-100">
           <div className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">
+              <h2 className="text-xl font-bold text-gray-100">
                 Top Selling Products
               </h2>
-              <TrendingUp className="h-5 w-5 text-gray-400" />
+              <TrendingUp className="h-7 w-7 text-gray-200" />
             </div>
             <div className="space-y-4">
-              {topSellingProducts.map((product) => (
+              {topSellingProducts.map((product, index) => (
                 <div
-                  key={product.id}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                  key={index}
+                  className="flex items-center justify-between p-4 bg-gray-300 rounded-lg transition-all duration-500 ease-in-out hover:scale-110"
                 >
                   <div className="flex items-center space-x-3">
                     <div className="bg-white p-2 rounded-md">
-                      <Package className="h-6 w-6 text-gray-400" />
+                      <Package className="h-6 w-6 text-gray-800" />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">
+                      <p className="font-bold text-sl text-gray-900">
                         {product.name}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-lg text-gray-500">
                         {product.category}
                       </p>
                     </div>
@@ -141,7 +151,7 @@ export function Dashboard() {
                     <p className="font-medium text-gray-900">
                       ${product.price.toFixed(2)}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-800">
                       Stock: {product.stock}
                     </p>
                   </div>
@@ -152,30 +162,30 @@ export function Dashboard() {
         </div>
 
         {/* Low Stock Alerts */}
-        {getLowStockProducts.length > 0 && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+        {lowStockProducts.length > 0 && (
+          <div className="bg-gray-400 rounded-xl shadow-sm border border-gray-100">
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">
+                <h2 className="text-xl font-bold text-gray-900">
                   Low Stock Alerts
                 </h2>
-                <Clock className="h-5 w-5 text-gray-400" />
+                <Clock className="h-7 w-7 text-black" />
               </div>
               <div className="space-y-4">
-                {getLowStockProducts.map((product) => (
+                {lowStockProducts.map((product, index) => (
                   <div
-                    key={product.id}
-                    className="flex items-center justify-between p-4 bg-red-50 rounded-lg"
+                    key={index}
+                    className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg"
                   >
                     <div className="flex items-center space-x-3">
                       <div className="bg-white p-2 rounded-md">
                         <AlertTriangle className="h-6 w-6 text-red-500" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">
+                        <p className="font-bold text-lg text-gray-900">
                           {product.name}
                         </p>
-                        <p className="text-sm text-red-600">
+                        <p className="text-md font-semibold text-red-600">
                           Current Stock: {product.stock} / Minimum:{" "}
                           {product.minStock}
                         </p>

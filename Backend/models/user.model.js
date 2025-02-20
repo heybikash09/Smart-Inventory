@@ -12,5 +12,9 @@ const userScema=new mongoose.Schema({
         type:String,
         required:true,
     },
+    productsList:{
+        type:Array,
+        default:[]
+    }
 })
 export const User=mongoose.model('user',userScema)

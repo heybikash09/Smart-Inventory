@@ -1,12 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Plus, Edit2, Trash2 } from "lucide-react";
 import { useStore } from "../contentStore/useStore";
+import { useProductStore } from "../contentStore/productStore";
+import { useAuthStore } from "../contentStore/authStore";
 export function Products() {
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-  const products = useStore((state) => state.products);
-  const addProduct = useStore((state) => state.addProduct);
-  const updateProduct = useStore((state) => state.updateProduct);
+  //  const { user,checkauth } = useAuthStore();
+  const {
+    products,
+    addProducts,
+    removeProducts,
+    updateProducts,
+    getLowStockProducts,
+    lowStockProducts,
+    checkProducts
+  } = useProductStore();
   const removeProduct = useStore((state) => state.removeProduct);
 
   const [formData, setFormData] = useState({
@@ -16,18 +25,25 @@ export function Products() {
     stock: 0,
     minStock: 0,
     category: "",
-    sku: "",
+    color: "",
   });
-
+  useEffect(()=>{
+    checkProducts()
+  },[formData,products])
+  console.log('low stock-->',lowStockProducts)
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log('formData--:',formData)
     if (editingProduct) {
-      updateProduct({ ...editingProduct, ...formData });
+      //updateProduct({ ...editingProduct, ...formData });
+      updateProducts({
+        ...formData
+      })
+      console.log('after Update -->',formData)
       setEditingProduct(null);
     } else {
-      addProduct({
-        ...formData,
-        id: crypto.randomUUID(),
+      addProducts({
+        ...formData
       });
     }
     setFormData({
@@ -37,7 +53,7 @@ export function Products() {
       stock: 0,
       minStock: 0,
       category: "",
-      sku: "",
+      color: "",
     });
     setIsAddingProduct(false);
   };
@@ -51,7 +67,7 @@ export function Products() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-lg font-medium text-gray-900">Products</h2>
+        <h2 className="text-xl font-bold text-gray-900">P r o d u c t s</h2>
         <button
           onClick={() => setIsAddingProduct(true)}
           className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -60,7 +76,6 @@ export function Products() {
           Add Product
         </button>
       </div>
-
       {isAddingProduct && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
@@ -165,13 +180,13 @@ export function Products() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  SKU
+                  color
                 </label>
                 <input
                   type="text"
-                  value={formData.sku}
+                  value={formData.color}
                   onChange={(e) =>
-                    setFormData({ ...formData, sku: e.target.value })
+                    setFormData({ ...formData, color: e.target.value })
                   }
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   required
@@ -190,7 +205,7 @@ export function Products() {
                       stock: 0,
                       minStock: 0,
                       category: "",
-                      sku: "",
+                      color: "",
                     });
                   }}
                   className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -213,50 +228,50 @@ export function Products() {
         <div className="flex flex-col">
           <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-              <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                <table className="min-w-full divide-y divide-gray-200">
+              <div className="shadow overflow-hidden border-b-2 border-gray-600 sm:rounded-lg">
+                <table className="min-w-full divide-y  divide-cyan-950">
                   <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <tr className="p-2.5">
+                      <th className="px-6 py-3 text-left text-lg font-extrabold text-gray-700 uppercase tracking-wider">
                         Product
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-lg font-extrabold text-gray-700 uppercase tracking-wider">
                         Category
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-lg font-extrabold text-gray-700 uppercase tracking-wider">
                         Price
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-lg font-extrabold text-gray-700 uppercase tracking-wider">
                         Stock
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        SKU
+                      <th className="px-6 py-3 text-left text-lg font-extrabold text-gray-700 uppercase tracking-wider">
+                        color
                       </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-lg font-extrabold text-gray-700 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {products.map((product) => (
-                      <tr key={product.id}>
+                  <tbody className="bg-white divide-y divide-gray-700 ">
+                    {products.map((product,index) => (
+                      <tr key={index} className=" border-b-2 border-r-emerald-950 mt-2">
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-md font-extrabold text-gray-900">
                             {product.name}
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-md text-gray-700">
                             {product.description}
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap font-semibold text-md text-gray-800">
                           {product.category}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap font-semibold text-md text-gray-800">
                           ${product.price.toFixed(2)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
-                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            className={`px-2 inline-flex font-semibold text-md text-gray-800 leading-5 rounded-full ${
                               product.stock <= product.minStock
                                 ? "bg-red-100 text-red-800"
                                 : "bg-green-100 text-green-800"
@@ -265,8 +280,8 @@ export function Products() {
                             {product.stock}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {product.sku}
+                        <td className="px-6 py-4 whitespace-nowrap font-semibold text-md text-gray-800">
+                          {product.color}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <button

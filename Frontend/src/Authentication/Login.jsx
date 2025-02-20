@@ -1,19 +1,22 @@
 import React, { useState } from "react";
 import { FaStore, FaEnvelope, FaLock } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../contentStore/authStore";
 
 function Login() {
-  const [formData, setFormData] = useState({
-    shopName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const {login,user}=useAuthStore()
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    console.log('us-->',user)
+    login({email,password})
+    
+  if(user)navigate('/home')
   };
 
-  const handleSubmit = () => {};
   return (
     <>
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-green-400 to-green-700">
@@ -36,8 +39,8 @@ function Login() {
                 type="email"
                 name="email"
                 placeholder="Email Address"
-                value={formData.email}
-                onChange={handleChange}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="ml-2 w-full bg-transparent outline-none"
                 required
               />
@@ -49,8 +52,8 @@ function Login() {
                 type="password"
                 name="password"
                 placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="ml-2 w-full bg-transparent outline-none"
                 required
               />

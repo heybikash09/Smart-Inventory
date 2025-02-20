@@ -1,20 +1,26 @@
 import React, { useState } from "react";
 import { FaStore, FaEnvelope, FaLock } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
+import { useAuthStore } from "../contentStore/authStore";
 function Signup() {
-  const [formData, setFormData] = useState({
-    shopName: "",
-    email: "",
-    password: "",
-  });
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const {signup}=useAuthStore()
+  const [shopname, setShopname] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
 
-  const handleSubmit = () => {};
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = {
+      shopname: shopname,
+      email: email,
+      password: password,
+    };
+    console.log("Data-->", formData);
+    signup(formData)
+  };
   return (
     <>
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-green-400 to-green-700">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-sky-700 to-green-700">
         <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
           <h2 className="text-3xl font-bold text-center text-green-700">
             🍏 Smart Inventory
@@ -34,8 +40,8 @@ function Signup() {
                 type="text"
                 name="shopName"
                 placeholder="Shop Name"
-                value={formData.shopName}
-                onChange={handleChange}
+                value={shopname}
+                onChange={(e) => setShopname(e.target.value)}
                 className="ml-2 w-full bg-transparent outline-none"
                 required
               />
@@ -47,8 +53,8 @@ function Signup() {
                 type="email"
                 name="email"
                 placeholder="Email Address"
-                value={formData.email}
-                onChange={handleChange}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="ml-2 w-full bg-transparent outline-none"
                 required
               />
@@ -60,8 +66,8 @@ function Signup() {
                 type="password"
                 name="password"
                 placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="ml-2 w-full bg-transparent outline-none"
                 required
               />

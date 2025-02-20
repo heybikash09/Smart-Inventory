@@ -4,6 +4,7 @@ import { generateDefaultToken } from "../utils/generateTokens.js"
 export const signup = async (req, res) =>{
     try {
         const { shopname,email,password } = req.body
+        console.log(shopname)
         if (!email || !shopname || !password)
             return res.status(402).json({ status:false,message: 'All field has to be filled !!' })
 
@@ -53,8 +54,10 @@ export const signup = async (req, res) =>{
 export async function login(req, res) {
     try {
         const { email, password } = req.body
+
+        console.log(email,'  ',password)
         if (!email || !password)
-            return res.status(200).json({ succes: false, message: "User not exist in this platform !!" })
+            return res.status(200).json({ succes: false, message: "All field has to be filled !!" })
         const user = await User.findOne({ email: email })
         console.log("user-->", user)
         if (!user)
@@ -63,9 +66,11 @@ export async function login(req, res) {
         if (!isPasswordCorrect)
             return res.status(400).json({ succes: false, message: "Invalid Credential--(password) !!" })
         generateDefaultToken(user._id, res)
+        console.log('Done')
         return res.status(201).json({ status: 'sucesss !!!',message:'Login Successfully',user: { ...user._doc, password: "" } })
     }
     catch (err) {
+        console.log(err.message)
         return res.status(400).json({ success: false, message: 'Internal Server Error !!' })
     }
 }
